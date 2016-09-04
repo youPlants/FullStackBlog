@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<htmL>
+	<head>
+		<link rel="stylesheet" type="text/css" href="/static/styles.css" />
+
+		<title> FullStackBlog</title>
+	</head>
+	<body>
+		<a href="/blog" class="main-title">
+		FullStackBlog
+		</a><br>
+		<a href="/login" class="login-logout">
+		Login
+		</a><br>
+		<a href="/logout" class="login-logout">
+		Logout
+		</a>
+		<div id="content">
+		{% block content %}
+		{% endblock %}
+		</div>
+	</body>
+</htmL>
