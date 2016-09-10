@@ -9,12 +9,15 @@
 		<a href="/blog" class="main-title">
 		FullStackBlog
 		</a><br>
-		<a href="/login" class="login-logout">
-		Login
-		</a><br>
-		<a href="/logout" class="login-logout">
-		Logout
-		</a>
+		<div class="login-area">
+			{% if user %}
+				<p class="username">Logged in:{{user.name}}</p> <a class="login-logout" href="/logout" >Logout</a>
+			{% else %}
+				<a class="login-logout" href="/login">Login</a>
+				<a class="login-logout" href="/signup">Signup</a>
+			{% endif %}
+		</div><br><br>
+
 		<div id="content">
 		{% block content %}
 		{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+		<h2> New Comment {{ subject}} </h2>
+
+		<form method="post">
+			<label>
+				<div>Comment</div>
+				<textarea name="comment"></textarea>
+				<input type="hidden" name="author" value="{{user.name}}">
+			</label>
+
+			<div class="error">{{error}}</div>
+			<input type="submit">
+		<div class="post-content">
+			{{content | safe}}
+
+{% endblock %}

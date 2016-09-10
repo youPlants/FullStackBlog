@@ -2,6 +2,24 @@
 
 {% block content %}
 
-	{{post.render() | safe}}
 
+	{{post.render() | safe}}
+		{% for c in post.comments %}
+
+	<div class="comments">
+		<div class="comment-author">{{c.parent().name }}</div>
+		<p class="comment-content">{{c.content}}</p>
+		{% if user.name == c.author %}
+		<a href="/editcomment/?post={{post.key().id()}}&comment={{c.key().id()}}">Edit Comment</a>
+		<a href="/deletecomment/?post={{post.key().id()}}&comment={{c.key().id()}}">Delete Comment</a>
+		{% endif %}
+	</div>
+	{% endfor %}
+	<a href="/addcomment/?post={{post.key().id()}}">Add new comment</a>
+	{% if user.name == post.author %}
+				<a class="edit-delete" href="/editpost/?post={{post.key().id()}}">Edit Post</a>&nbsp;&nbsp;
+				<a class="edit-delete" href="/deletepost/?post={{post.key().id()}}">Delete Post</a>
+			{% else %}
+				<a href"/blog/{{post.key().id()}}/like">Like</a>
+		{% endif %}
 {% endblock %}

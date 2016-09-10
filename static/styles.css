@@ -77,6 +77,49 @@ input[type=submit] {
 .login-logout {
 	background-color: #d3d3d3; 
 	text-decoration: none; 
-	outline: 2px solid black;  
+	outline: 2px solid grey; 
 	font-size: 20px; 
+	float: right; 
+	margin: 10px;
+}
+
+.back {
+	background: #d3d3d3; 
+	text-decoration: none; 
+	outline: 2px solid grey; 
+	font-size: 20px; 
+}
+
+.edit-post {
+	text-decoration: none; 
+	font-size: 16px; 
+}
+
+.post-title-link {
+	text-decoration: none; 
+}
+
+.new-post {
+	background-color: #d3d3d3; 
+	text-decoration: none; 
+	outline: 2px solid grey; 
+	font-size: 20px; 
+	float: right; 
+}
+
+.username {
+	font-size: 20px;
+	margin-left: 80%;
+	margin-right: 0px;
+}
+
+.edit-delete {
+	background-color: #d3d3d3; 
+	text-decoration: none; 
+	outline: 2px solid grey; 
+	font-size: 20px; 
+	padding-right: 20px; 
+	padding-left: 20px;  
+	margin-right: 60px;
+	margin-left: 60px;  
 }
