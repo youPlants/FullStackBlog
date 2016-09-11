@@ -103,8 +103,7 @@ input[type=submit] {
 	background-color: #d3d3d3; 
 	text-decoration: none; 
 	outline: 2px solid grey; 
-	font-size: 20px; 
-	float: right; 
+	font-size: 20px;  
 }
 
 .username {

@@ -2,14 +2,15 @@
 
 {% block content %}
 	<div>
-		<a class="new-post" href="/newpost">New Post</a>
+		<a href="/newpost" class="new-post">New Post</a>
 	</div>
 	{% for post in posts %}
 
 		{{ post.render() | safe }}
 		<br><br>
 		<div>
-			<span>{{post.comments.count()}} Comments</span>
+			<span>{{post.comments.count()}} Comment(s)</span>
+			<span>{{post.likes}} Like(s)</span>
 		</div>
 
 		{% for c in post.comments %}
@@ -29,7 +30,7 @@
 				<a class="edit-delete" href="/editpost/?post={{post.key().id()}}">Edit Post</a>&nbsp;&nbsp;
 				<a class="edit-delete" href="/deletepost/?post={{post.key().id()}}">Delete Post</a>
 			{% else %}
-				<a href"/blog/{{post.key().id()}}/like">Like</a>
+				<a href="/like/?post={{post.key().id()}}"> Like</a>
 
 			{% endif %}
 		
