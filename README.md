@@ -31,7 +31,7 @@ After you have already cloned the repository, to run the blog locally you will u
 	 </ul>
 </li>
 <li>The admin port is where you can view the datastore. It also contains other backend data pertaining to the app
-<ul><li>Same access process for access, but it will have a diffrent port #</li>
+<ul><li>Same access process for access, but it will have a diffrent port #</li></ul>
 </li>
 Once connected to the app, you will be directed to the front page of the blog, this is where the existing blog posts will be displayed. In order to access any functionaliy you must register with username and password. The next section goes into specifics around general functionality and default user authorizations.
 
