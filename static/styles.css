@@ -122,3 +122,24 @@ input[type=submit] {
 	margin-right: 60px;
 	margin-left: 60px;  
 }
+
+.like-post {
+	text-decoration: none; 
+	outline: 2px solid grey; 
+	background-color: #d3d3d3;
+	margin: 10px; 
+}
+
+.add-comment {
+	text-decoration: none; 
+	outline: 2px solid grey; 
+	background-color: #d3d3d3; 
+	margin: 10px; 
+}
+
+.edit-comment {
+	text-decoration: none; 
+	outline: 2px solid grey; 
+	background-color: #d3d3d3; 
+	margin: 10px; 
+}

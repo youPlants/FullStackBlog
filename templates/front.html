@@ -19,18 +19,18 @@
 			<div class="comment-author">{{c.parent().name }}</div>
 			<p class="comment-content">{{c.content}}</p>
 			{%  if user.name == c.author %}
-			<a href="/editcomment/?post={{post.key().id()}}&comment={{c.key().id()}}">Edit Comment</a>
-			<a href="/deletecomment/?post={{post.key().id()}}&comment={{c.key().id()}}">Delete Comment<a>
+			<a class="edit-comment" href="/editcomment/?post={{post.key().id()}}&comment={{c.key().id()}}">Edit Comment</a>
+			<a class="edit-comment" href="/deletecomment/?post={{post.key().id()}}&comment={{c.key().id()}}">Delete Comment<a>
 			{% endif %}
 		</div>
 		{% endfor %}
 
-		<a href="/addcomment/?post={{post.key().id()}}">Add new comment</a>
+		<a class="add-comment" href="/addcomment/?post={{post.key().id()}}">Add new comment</a>
 					{% if user.name == post.author %}
 				<a class="edit-delete" href="/editpost/?post={{post.key().id()}}">Edit Post</a>&nbsp;&nbsp;
 				<a class="edit-delete" href="/deletepost/?post={{post.key().id()}}">Delete Post</a>
 			{% else %}
-				<a href="/like/?post={{post.key().id()}}"> Like</a>
+				<a class="like-post" href="/like/?post={{post.key().id()}}"> Like</a>
 
 			{% endif %}
 		

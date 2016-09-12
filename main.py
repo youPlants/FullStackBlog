@@ -492,7 +492,7 @@ class Logout(Handler):
 		self.logout()
 		self.redirect('/signup')
 
-
+#Asigns handlers to their respescitve url address
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/blog/?', BlogFront),
