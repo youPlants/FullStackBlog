@@ -88,88 +88,108 @@ class Handler(webapp2.RequestHandler):
 
     def login(self, user):
         self.set_secure_cookie('user_id', str(user.key().id()))
-# Function removes secure user cookie when the user logs out
 
     def logout(self):
+        """
+        Remove secure user cookie when user logs out
+        """
         self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
-# Read's and intializes secure cookie to user idea for use in authentication
 
     def initialize(self, *a, **kw):
+        """
+        Read and initialize secure cookie to user id for us in authentication
+        """
         webapp2.RequestHandler.initialize(self, *a, **kw)
         uid = self.read_secure_cookie('user_id')
         self.user = uid and User.by_id(int(uid))
-# Global function to render each blog post.
 
 
 def render_post(response, post):
+    """
+    Global function to render each blog post on the front page
+    """
     response.out.write('<b>' + post.subject + '</br></br>')
     response.out.write(post.content)
-# MainPage handler, contains hello world and link to the blog
-
-
-class MainPage(Handler):
-
-    def get(self):
-        self.write('Hello world! Visit my <a href="/blog">Blog</a>')
-# Makes a salt value to use to increase security of encryption
 
 
 def make_salt(length=5):
+    """
+    Creates a salt value to use to increase encryption complexity
+    """
     return ''.join(random.choice(letters) for x in xrange(length))
-# Makes password hash, checks if salt exists and creates password hash
-# using sha-256
 
 
 def make_pw_hash(name, pw, salt=None):
+    """
+    Makes a password hash, checks if salt exists and creates password
+    hash using sha-256 encryption
+    """
     if not salt:
         salt = make_salt()
     h = hashlib.sha256(name + pw + salt).hexdigest()
     return '%s,%s' % (salt, h)
-# Function hashes user's entered password and checks it against hashed
-# password in datastore
 
 
 def valid_pw(name, password, h):
+    """
+    Function hashes user password entered for login and checks
+    it against hashed password in the datastore
+    """
     salt = h.split(',')[0]
     return h == make_pw_hash(name, password, salt)
-# Creates a users key and sets the group to default
 
 
 def users_key(group='default'):
+    """
+    Create user key and set group to default
+    """
     return db.Key.from_path('users', group)
-# Creates the user class in datastore and some class methods
 
 
 class User(db.Model):
+
+    """
+    Creates a user class in the datastore, and creates
+    class methods for accessing users by id or by name,
+    also class method for user login
+    """
     name = db.StringProperty(required=True)
     pw_hash = db.StringProperty(required=True)
     email = db.StringProperty()
-# Function takes a user Id and returns a User from the datastore
 
     @classmethod
     def by_id(cls, uid):
+        """
+        Function takes a user Id and returns a User from the datastore
+        """
         return User.get_by_id(uid, parent=users_key())
-# Function takes a User's name and returns the User form the datastore
 
     @classmethod
     def by_name(cls, name):
+        """
+        Function takes a User's name and returns the User form the datastore
+        """
         u = User.all().filter('name =', name).get()
         return u
-# Function takes the User input from signup and register's the new User in
-# the datastore
 
     @classmethod
     def register(cls, name, pw, email=None):
+        """
+        Takes the user name, pw and email from signup and registers the new
+        User in the datastore
+        """
         pw_hash = make_pw_hash(name, pw)
         return User(parent=users_key(),
                     name=name,
                     pw_hash=pw_hash,
                     email=email)
-# Function calls the valid_pw function when a user sign's in to validate
-# their credentials
 
     @classmethod
     def login(cls, name, pw):
+        """
+        Login calls the valid_pw function when a user signs in to validate
+        their credentials
+        """
         u = cls.by_name(name)
         if u and valid_pw(name, pw, u.pw_hash):
             return u
@@ -178,10 +198,15 @@ class User(db.Model):
 
 def blog_key(name='default'):
     return db.Key.from_path('blogs', name)
-# Creates the post class and class methods.
 
 
 class Post(db.Model):
+
+    """
+    Create Post class with class methods to get post
+    by subject, to render each post using post template
+    And comments property for user comments on the post
+    """
     subject = db.StringProperty(required=True)
     author = db.StringProperty(required=True)
     content = db.TextProperty(required=True)
@@ -189,34 +214,46 @@ class Post(db.Model):
     last_modified = db.DateTimeProperty(auto_now=True)
     likes = db.IntegerProperty(required=False)
     liked = db.ListProperty(str)
-# Method takes a post subject and finds the matching post
 
     @classmethod
     def by_subject(cls, subject):
+        """
+        Takes a post subject and finds the matching post
+        """
         s = User.all().filter('subject =', subject).get()
         return s
-# Method to render each blog post, takes a post object and populates post
-# template
 
     def render(self):
+        """
+        Takes a post object and renders a given blog post. Formats spacing and
+        renders the post using the post template
+        """
         self._render_text = self.content.replace('\n', '<br>')
         return render_str('post.html', post=self)
-# Adds comments property to Posts object
 
     @property
     def comments(self):
+        """
+        Adds user comments to the post object
+        """
         return Comment.all().filter("post = ", str(self.key().id()))
-# Creates comment class for when users add commments to a post
 
 
 class Comment(db.Model):
+
+    """
+    Creates comment class for when users add comments to a post
+    """
     content = db.TextProperty(required=True)
     author = db.StringProperty(required=True)
     post = db.StringProperty(required=True)
-# Method takes a comment and renders comment template
 
     @classmethod
     def render(self):
+        """
+        Takes a comment object and renders the comment using the
+        comment template
+        """
         self._render_text = self.content.replace('\n', '<br>')
         return render_str('comment.html', post=self)
 # Front page blog handler displays blog posts in th order they were created
@@ -224,15 +261,23 @@ class Comment(db.Model):
 
 class BlogFront(Handler):
 
+    """
+    Front blog page handler, queries datastore for the posts and displays them
+    in order they were created
+    """
+
     def get(self):
         posts = Post.all().order('-created')
         # posts = db.GqlQuery
         # ("select * from Post order by created desc limit 10")
         self.render('front.html', posts=posts)
-# Post page for specific post takes post_id and renders the post
 
 
 class PostPage(Handler):
+
+    """
+    Post page handler takes post_id from the url and renders the post
+    """
 
     def get(self, post_id):
         key = db.Key.from_path("Post", int(post_id), parent=blog_key())
@@ -247,6 +292,13 @@ class PostPage(Handler):
 
 
 class NewPost(Handler):
+
+    """
+    Page handler for making new blog post; get method checks that user is
+    logged in; renders the newpost template. Post method takes the subject,
+    content and author data from the newpost form and puts it to the database
+    as a new post.
+    """
 
     def get(self):
         if self.user:
@@ -288,6 +340,13 @@ class NewPost(Handler):
 
 class EditPost(Handler):
 
+    """
+    Handler for users to edit existing blog posts. Get method, querries the
+    post information from the datastore and populates the editpost template.
+    Also runs check to make sure that user is logged in and redirects to the
+    login page if they are not.
+    """
+
     def get(self):
         if self.user:
             post_id = self.request.get("post")
@@ -308,9 +367,15 @@ class EditPost(Handler):
 # If user is not registered user, redirect to login page
         else:
             self.redirect('/login')
-# Takes edited post data and puts to datastore
 
     def post(self):
+        """
+        Checks that user is logged in and get the changes from the edit post
+        form and updates the entry in the datastore. Subject is the blog post
+        subject from the editpost form, the content is the post content from
+        the form. The username is in a secure cookie in the browser and has to
+        match the authors name from the datastore.
+        """
         if self.user:
             post_id = self.request.get("post")
             key = db.Key.from_path("Post", int(post_id), parent=blog_key())
@@ -334,10 +399,17 @@ class EditPost(Handler):
 # If user is not logged in registered user, redirect to login page
         else:
             self.redirect('/login')
-# Handler for users to delete their blog post
 
 
 class DeletePost(Handler):
+
+    """
+    DeletePost handles user deletes of existing blog posts. Get method gets
+    blog post id from the url and gets the Post object from the datastore.
+    Check user name against author name to make sure that they match and then
+    render the delete post template. If user submits confirm delete, post
+    method verifies authorization and deletes entry from datastore.
+    """
 
     def get(self):
         if self.user:
@@ -373,10 +445,16 @@ class DeletePost(Handler):
 # if user is not a registered user, redirect to login page
         else:
             self.redirect('/login')
-# Handler for users addding new comments to a blog post
 
 
 class AddComment(Handler):
+
+    """
+    Handles user comments on blog posts. Get method gets post object and
+    renders the new comment page. Subject, content and post_id are
+    atributes of the post object retrieved from the datastore. Post method
+    verifies user login and puts the new comment to the datastore.
+    """
 
     def get(self):
         if self.user:
@@ -427,6 +505,14 @@ class AddComment(Handler):
 
 
 class EditComment(Handler):
+
+    """
+    Handler for editing user comments in the datastore. Get method gets
+    the comment from the datastore and verifies that user is the author
+    and populates the edit comment form with the comment data for the user to
+    edit. Post method verifies that user matches author and updates the
+    comment to the datastore
+    """
 
     def get(self):
         if self.user:
@@ -479,10 +565,16 @@ class EditComment(Handler):
 # If user is not a registerd user redirects to login page
         else:
             self.redirect('/login')
-# Handler for registered user deleting their own comments
 
 
 class DeleteComment(Handler):
+
+    """
+    Handler for deleting existing comments from blog posts. Get method
+    verify that user is the author of the comment and gets the comment from
+    the datastore. Post method verify that user is author and delete the
+    comment entry from the datastore.
+    """
 
     def get(self):
         if self.user:
@@ -527,11 +619,14 @@ class DeleteComment(Handler):
         else:
             self.redirect('/login')
 
-# Checks user credentials and handles post likes. Each user can only like a
-# post from another author, amd can only like each post once.
-
 
 class LikePost(Handler):
+
+    """
+    Checks the user credentials and handles post likes. Each user can only
+    like a post submitted by a different user and can only like each blog
+    post one time.
+    """
 
     def get(self):
         if self.user:
@@ -558,6 +653,12 @@ class LikePost(Handler):
 
 
 class Welcome(Handler):
+
+    """
+    Welcome handler follows the regsitration page, and generates a
+    personalized message to welcome the new user to the blog, confriming
+    successful registration.
+    """
 
     def get(self):
         if self.user:
@@ -589,6 +690,14 @@ def valid_email(email):
 
 
 class Signup(Handler):
+
+    """
+    Handler renders registration form for new user to signup to blog, checks
+    that username is unique, and passwords entry match, email submission is
+    optional. If user enters incorrect data and the signup will re-render. If
+    the user data is valid, post method with put the user to the database and
+    render the welcome page.
+    """
 
     def get(self):
         self.render("signup.html")
@@ -633,11 +742,14 @@ class Signup(Handler):
 
     def done(self, *a, **kw):
         raise NotImplementedError
-# Overwrites the done function from signup class, checks that user is
-# unique and puts new user to the datastore
 
 
 class Register(Signup):
+
+    """
+    Overwrites the done function from signup class, checks that the user is
+    unique and puts the user entry to the datastore.
+    """
 
     def done(self):
         # Checks if entered user name matches an already existing user's name.
@@ -654,11 +766,14 @@ class Register(Signup):
 # welcome page
             self.login(u)
             self.redirect('/welcome')
-# Handles user login, checks user's name and password hash against
-# datastore and stores user's id in secure cookie
 
 
 class Login(Handler):
+
+    """
+    Handles user login, checks the user's name and password hash against the
+    datastore and stores the user's id in a secure cookie.
+    """
 
     def get(self):
         self.render('login.html')
@@ -679,11 +794,14 @@ class Login(Handler):
         else:
             msg = 'Invalid login'
             self.render('login.html', error=msg)
-# Logout handler, passes user into logout function, which logs user out
-# and delete's the secure cookie
 
 
 class Logout(Handler):
+
+    """
+    Handles logout, passes user into logout function, which logs the user out
+    and deletes the secure cookie
+    """
 
     def get(self):
         self.logout()
