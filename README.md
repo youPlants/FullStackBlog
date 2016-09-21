@@ -1,7 +1,7 @@
 FullStackBlog Readme
 *******************
 
-Simple Multi-User-Blog with user authoriztion, login, logout, create post and other functionality. This app was created in Python to run on Google's App Engine.
+Simple Multi-User-Blog with user authoriztion, login, logout, create post and other functionality. This app was created in Python to run on Google's App Engine. You can find the live version, deployed to google's App Engine at http://fullstackblog.appspot.com
 
 
 <h2>What do I need to run this?</h2>
